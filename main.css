@@ -1,0 +1,8 @@
+canvas {
+    display: block;
+    border: 1px solid black;
+    margin: auto;
+}
+img {
+    visibility: hidden;
+}
