@@ -48,7 +48,7 @@ var GAME = {
         GAME.save();
     },
     frameCount: 0,
-    gravity: 1,
+    gravity: 1.5,
     friction: 0.9,
     state: 0,
     camera: {x:0, y:0},
@@ -80,7 +80,7 @@ function setSprites(){
             new Sprite("h1", [1, 1]),
             new Sprite("h2", [1, 1]),
             ],
-            10, true),
+            3, true),
     };
     for(var i in spriteAnimations){
         spriteAnimations[i].init();
@@ -94,7 +94,27 @@ function init(){
     GAME.start();
     GAME.activate();
 }
-player = new Entity(50, 50, 50, 50);
+player = new Player(50, 50, 50, 50);
+player2 = new Player(90, 50, 50, 50);
+player2.resetKeyBindings();
+player2.setKeyPressBinding(37, player2.moveLeft);
+player2.setKeyPressBinding(39, player2.moveRight);
+player2.setKeyPressBinding(38, player2.jump);
+player2.setKeyPressBinding(40, player2.meteor);
+player2.setKeyReleaseBinding(37, player2.stopMoveLeft);
+player2.setKeyReleaseBinding(39, player2.stopMoveRight);
+var entities = [];
+entities.push(new Platform(25, 200, 200, 50));
+document.onkeydown = function(e){
+    e = e || window.event;
+    player.handleKeyPress(e.keyCode);
+    player2.handleKeyPress(e.keyCode);
+}
+document.onkeyup = function(e){
+    e = e || window.event;
+    player.handleKeyRelease(e.keyCode);
+    player2.handleKeyRelease(e.keyCode);
+}
 function main(){
     if(!GAME.loadedEverything){
         for(var i in spriteAnimations){
@@ -114,6 +134,11 @@ function main(){
     GAME.context.fillStyle = "#FFFFFF";
     GAME.context.fillRect(-GAME.canvas.width * 3, -GAME.canvas.height * 3,
         GAME.canvas.width * 6, GAME.canvas.height * 6);
-    player.move();
-    player.draw();
+    player.update();
+    player2.update();
+    for(var e in entities){
+        entities[e].interact(player);
+        entities[e].interact(player2);
+        entities[e].draw();
+    }
 }

@@ -45,7 +45,6 @@ class Animation {
             if(this.autoloop || this.currentSprite < this.#spriteList.length - 1){
                 this.currentSprite++;
                 this.currentSprite %= this.#spriteList.length;
-                console.log(this.#spriteList.length);
                 this.timer = 0;
             }
         }
@@ -65,8 +64,12 @@ class Entity {
     height;
     dead;
     rotation;
+    delayTimer;
     invinciTimer;
     animation;
+    keyPBindings;
+    keyRBindings;
+    color;
     constructor(X, Y, W, H){
         this.pPosition = {x: X, y: Y};
         this.position = {x: X, y: Y};
@@ -76,6 +79,8 @@ class Entity {
         this.dead = false;
         this.rotation = 0;
         this.invinciTimer = 0;
+        this.delayTimer = 0;
+        this.color = "#000000";
     }
     move(){
         this.position.x += this.velocity.x;
@@ -129,4 +134,24 @@ class Entity {
     whenHit(obj){}
     // Game logic-only function
     update(){}
+    handleKeyPress(keyCode){
+        if(keyCode in this.keyPBindings){
+            this.keyPBindings[keyCode].call(this);
+        }
+    }
+    handleKeyRelease(keyCode){
+        if(keyCode in this.keyRBindings){
+            this.keyRBindings[keyCode].call(this);
+        }
+    }
+    setKeyPressBinding(keyCode, func){
+        this.keyPBindings[keyCode] = func;
+    }
+    setKeyReleaseBinding(keyCode, func){
+        this.keyRBindings[keyCode] = func;
+    }
+    resetKeyBindings(){
+        this.keyPBindings = {};
+        this.keyRBindings = {};
+    }
 }
